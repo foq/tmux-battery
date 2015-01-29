@@ -6,12 +6,16 @@ source "$CURRENT_DIR/helpers.sh"
 
 print_battery_percentage() {
 	# percentage displayed in the 2nd field of the 2nd row
-	if command_exists "pmset"; then
-		pmset -g batt | awk 'NR==2 { gsub(/;/,""); print $2 }'
-	elif command_exists "upower"; then
-		battery=$(upower -e | grep battery | head -1)
-		upower -i $battery | grep percentage | awk '{print $2}'
-	fi
+	if command_exists "ibam"; then
+		#second battery support for thinkpad.
+                ibam --percentbios | grep "Bios percentage" | awk '{print $3$4}'
+        elif command_exists "pmset"; then
+                pmset -g batt | awk 'NR==2 { gsub(/;/,""); print $2 }'
+        elif command_exists "upower"; then
+                battery=$(upower -e | grep battery | head -1)
+                upower -i $battery | grep percentage | awk '{print $2}'
+        fi
+
 }
 
 main() {
